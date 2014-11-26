@@ -78,39 +78,17 @@ circ = [];
 sq = [];
 tri = [];
 for n = neurons
-   heatmaps = ViewNeuron_FunctionSpace(n, net, layer, shapes, shape_names, '-nodisplay');
+   heatmaps = ViewNeuron_FunctionSpace(n, net, layer, shapes, shape_names);
    circ = [circ, heatmaps{1}(:)];
    sq = [sq, heatmaps{2}(:)];
    tri = [tri, heatmaps{3}(:)];
 end
+close all
+%%
 
-% Plot them
-x = 'Neuron';
-y = 'Neural response';
+boxplot(sq); title('Square');
+boxplot(sq); title('Square');
 
-% Square
-figure;
-boxplot(sq);
-title('Square'); 
-xlabel(x);
-ylabel(y);
-pause(1); %pause, otherwise they'll overlap each other
-
-% Circle
-figure;
-boxplot(circ); 
-title('Circ');
-xlabel(x);
-ylabel(y);
-pause(1);
-
-% Triangle
-figure;
-boxplot(tri); 
-title('Triangle');
-xlabel(x);
-ylabel(y);
-pause(1);
 %% Test FunctionCloudPCA
 layer = 1;
 net = nets{1};

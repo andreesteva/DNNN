@@ -1,4 +1,4 @@
-function heatmaps = ViewNeuron_FunctionSpace(neuron, net, layer, stimuli, shape_names)
+function heatmaps = ViewNeuron_FunctionSpace(neuron, net, layer, stimuli, shape_names, varargin)
 % function ViewNeuron_FunctionSpace(neuron, net, layer, all_shapes)
 % plot neurons as functions on stimulus space for any chosen 
 %neuron in any chosen network in any chosen layer (which we can
@@ -20,6 +20,15 @@ function heatmaps = ViewNeuron_FunctionSpace(neuron, net, layer, stimuli, shape_
 % be sequential such that all images of the same class are contigious
 % columns in the matrix all_shapes
 
+    create_plots = true;
+    if(~isempty(varargin))
+        switch varargin{1}
+            case '-nodisplay'
+                create_plots = false;
+            otherwise
+                error('incorrect varargin');
+        end
+    end
 
     % Feedforward pass
     data = ExtractDataAtLayer(net, stimuli, layer);
@@ -34,8 +43,10 @@ function heatmaps = ViewNeuron_FunctionSpace(neuron, net, layer, stimuli, shape_
     for i = 1:num_shapes
         images = data(:,(i-1)*images_per_shape + 1 : i*images_per_shape);
         func = reshape(images(neuron,:), sqrt(images_per_shape), sqrt(images_per_shape));
-        figure, imagesc(func); colorbar;
-        title(shape_names{i});
+        if(create_plots)
+            figure, imagesc(func); colorbar;
+            title(shape_names{i});
+        end
         heatmaps{i} = func;
     end
 
