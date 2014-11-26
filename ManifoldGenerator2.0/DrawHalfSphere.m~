@@ -1,0 +1,11 @@
+function im = DrawHalfSphere(xc,yc,w,M)
+
+% Paraboloid
+[X,Y] = meshgrid(1:M, 1:M);
+f = min(((X-xc).^2 + (Y-yc).^2)/r^2, 1);
+
+% Invert - set BG to black
+f = 1-f;
+
+% Contruc
+plane = -min((X - xc) + (Y - yc), 0);

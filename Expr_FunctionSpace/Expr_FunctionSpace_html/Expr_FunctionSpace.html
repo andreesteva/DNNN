@@ -1,0 +1,173 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Expr_FunctionSpace</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-11-06"><meta name="DC.source" content="Expr_FunctionSpace.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Load Data</a></li><li><a href="#2">Plot the shapes</a></li><li><a href="#3">Neural Network Used</a></li><li><a href="#4">View a Pixel as a Function on Stimulus Space</a></li><li><a href="#5">View a Neuron as a Function on Stimulus Space</a></li><li><a href="#6">View the Eigenvectors of a Function Cloud of Neurons</a></li><li><a href="#7">Circles</a></li><li><a href="#8">Squares</a></li><li><a href="#9">Triangles</a></li></ul></div><h2>Load Data<a name="1"></a></h2><p>We load a fine-translation manifold of circles, triangles, and squares, as well as 20 neural networks trained to 0 error with a hidden layer size of 30</p><pre class="codeinput">load(<span class="string">'/Users/AndreEsteva/Google Drive/Documents/Stanford/Stanford Vision Lab/DNNN/Data/AnalogManifold-30.mat'</span>)
+load(<span class="string">'TrainedNets'</span>);
+</pre><h2>Plot the shapes<a name="2"></a></h2><pre class="codeinput">  <span class="keyword">for</span> i = 1:7000:length(shapes)
+      s = reshape(shapes(:,i),30,30);
+      figure, imshow(s);
+  <span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="Expr_FunctionSpace_01.png" alt=""> <img vspace="5" hspace="5" src="Expr_FunctionSpace_02.png" alt=""> <img vspace="5" hspace="5" src="Expr_FunctionSpace_03.png" alt=""> <img vspace="5" hspace="5" src="Expr_FunctionSpace_04.png" alt=""> <img vspace="5" hspace="5" src="Expr_FunctionSpace_05.png" alt=""> <img vspace="5" hspace="5" src="Expr_FunctionSpace_06.png" alt=""> <img vspace="5" hspace="5" src="Expr_FunctionSpace_07.png" alt=""> <img vspace="5" hspace="5" src="Expr_FunctionSpace_08.png" alt=""> <img vspace="5" hspace="5" src="Expr_FunctionSpace_09.png" alt=""> <img vspace="5" hspace="5" src="Expr_FunctionSpace_10.png" alt=""> <img vspace="5" hspace="5" src="Expr_FunctionSpace_11.png" alt=""> <h2>Neural Network Used<a name="3"></a></h2><p>The architecture used is a simple, 1-hidden layer net with a cross-entropy loss function, trained with scaled conjugate gradient and backpropagation</p><pre class="codeinput">view(nets{1});
+</pre><img vspace="5" hspace="5" src="Expr_FunctionSpace_12.png" alt=""> <h2>View a Pixel as a Function on Stimulus Space<a name="4"></a></h2><p>View a chosen input pixel as a function on stimulus space using a heatmap. We plot one heatmap per object class</p><pre class="codeinput">pixel = [15 15]; <span class="comment">% [x y]</span>
+num_shapes = 3;
+ViewPixel_FunctionSpace(pixel, shapes, num_shapes)
+</pre><img vspace="5" hspace="5" src="Expr_FunctionSpace_13.png" alt=""> <img vspace="5" hspace="5" src="Expr_FunctionSpace_14.png" alt=""> <img vspace="5" hspace="5" src="Expr_FunctionSpace_15.png" alt=""> <h2>View a Neuron as a Function on Stimulus Space<a name="5"></a></h2><p>Here, we choose a neuron in a layer of a net, and for each object class we plot a heatmap representing that neuron as a function on stimulus space</p><pre class="codeinput">neuron = 15;
+net = nets{1};
+layer = 1;
+shape_names = {<span class="string">'Circle'</span>, <span class="string">'Square'</span>, <span class="string">'Triangle'</span>};
+ViewNeuron_FunctionSpace(neuron, net, layer, shapes, shape_names);
+</pre><img vspace="5" hspace="5" src="Expr_FunctionSpace_16.png" alt=""> <img vspace="5" hspace="5" src="Expr_FunctionSpace_17.png" alt=""> <img vspace="5" hspace="5" src="Expr_FunctionSpace_18.png" alt=""> <h2>View the Eigenvectors of a Function Cloud of Neurons<a name="6"></a></h2><p>We feed-forward pass the stimuli through a net to a given layer, and consider each neuron's output at that layer to be a function over all the stimuli. This defines a function cloud of points and we do PCA on this function cloud, plotting the top K eigenvectors of the cloud</p><p>We do this by selecting each object class as stimuli and passing it through the net</p><pre class="codeinput">layer = 1;
+net = nets{1};
+K = 2;
+num_shapes = size(shapes,2);
+</pre><h2>Circles<a name="7"></a></h2><pre class="codeinput">gridshape = [153 153];
+stimuli = shapes(:,1:num_shapes/3);
+FunctionCloudPCA(net, layer, stimuli, gridshape, K, <span class="string">'Circles'</span>);
+</pre><img vspace="5" hspace="5" src="Expr_FunctionSpace_19.png" alt=""> <img vspace="5" hspace="5" src="Expr_FunctionSpace_20.png" alt=""> <h2>Squares<a name="8"></a></h2><pre class="codeinput">gridshape = [153 153];
+stimuli = shapes(:,num_shapes/3+1:num_shapes*2/3);
+FunctionCloudPCA(net, layer, stimuli, gridshape, K, <span class="string">'Squares'</span>);
+</pre><img vspace="5" hspace="5" src="Expr_FunctionSpace_21.png" alt=""> <img vspace="5" hspace="5" src="Expr_FunctionSpace_22.png" alt=""> <h2>Triangles<a name="9"></a></h2><pre class="codeinput">gridshape = [153 153];
+stimuli = shapes(:,num_shapes*2/3+1:num_shapes);
+FunctionCloudPCA(net, layer, stimuli, gridshape, K, <span class="string">'Triangles'</span>);
+</pre><img vspace="5" hspace="5" src="Expr_FunctionSpace_23.png" alt=""> <img vspace="5" hspace="5" src="Expr_FunctionSpace_24.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Load Data
+% We load a fine-translation manifold of circles, triangles, and squares,
+% as well as 20 neural networks trained to 0 error with a hidden layer size
+% of 30
+load('/Users/AndreEsteva/Google Drive/Documents/Stanford/Stanford Vision Lab/DNNN/Data/AnalogManifold-30.mat')
+load('TrainedNets');
+
+%% Plot the shapes
+  for i = 1:7000:length(shapes)
+      s = reshape(shapes(:,i),30,30);
+      figure, imshow(s);      
+  end
+  
+%% Neural Network Used
+%
+% The architecture used is a simple, 1-hidden layer net with a
+% cross-entropy loss function, trained with scaled conjugate gradient and
+% backpropagation
+
+view(nets{1});
+
+  
+%% View a Pixel as a Function on Stimulus Space
+%
+% View a chosen input pixel as a function on stimulus space using a
+% heatmap. We plot one heatmap per object class
+
+pixel = [15 15]; % [x y]
+num_shapes = 3;
+ViewPixel_FunctionSpace(pixel, shapes, num_shapes)
+
+%% View a Neuron as a Function on Stimulus Space
+%
+% Here, we choose a neuron in a layer of a net, and for each object class
+% we plot a heatmap representing that neuron as a function on stimulus
+% space
+%
+neuron = 15;
+net = nets{1};
+layer = 1;
+shape_names = {'Circle', 'Square', 'Triangle'};
+ViewNeuron_FunctionSpace(neuron, net, layer, shapes, shape_names);
+
+%% View the Eigenvectors of a Function Cloud of Neurons
+%
+% We feed-forward pass the stimuli through a net to a given layer, and
+% consider each neuron's output at that layer to be a function over all the
+% stimuli. This defines a function cloud of points and we do PCA on this
+% function cloud, plotting the top K eigenvectors of the cloud
+%
+% We do this by selecting each object class as stimuli and passing it
+% through the net
+
+layer = 1;
+net = nets{1};
+K = 2;
+num_shapes = size(shapes,2);
+
+%% Circles
+gridshape = [153 153]; 
+stimuli = shapes(:,1:num_shapes/3);
+FunctionCloudPCA(net, layer, stimuli, gridshape, K, 'Circles');
+
+%% Squares
+gridshape = [153 153]; 
+stimuli = shapes(:,num_shapes/3+1:num_shapes*2/3);
+FunctionCloudPCA(net, layer, stimuli, gridshape, K, 'Squares');
+
+%% Triangles
+gridshape = [153 153]; 
+stimuli = shapes(:,num_shapes*2/3+1:num_shapes);
+FunctionCloudPCA(net, layer, stimuli, gridshape, K, 'Triangles');
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,86 @@
+%% Load Data
+% We load a fine-translation manifold of circles, triangles, and squares,
+% as well as 20 neural networks trained to 0 error
+load('/Users/AndreEsteva/Google Drive/Documents/Stanford/Stanford Vision Lab/DNNN/Data/ThreeShapeManifold-30.mat')
+% load('TrainedNets');
+
+%% Plot the shapes
+  for i = 1:7000:length(shapes)
+      s = reshape(shapes(:,i),30,30);
+      imshow(s);
+      pause(0.1)
+  end
+  
+%% Neural Network used
+view(nets{1});
+  
+%% Test ViewPixelHeatMaps
+%
+% View a chosen input pixel as a function on stimulus space using a
+% heatmap. We plot one heatmap per object class
+
+pixel = [15 15]; % [x y]
+num_shapes = 3;
+ViewPixel_FunctionSpace(pixel, shapes, num_shapes)
+
+%% Train a few nets to 0 error and save them
+architecture = 30;
+num_nets = 20;
+nets = {};
+trs = {};
+for i = 1:num_nets
+    display(['Training Net ' num2str(i)]);
+    [net, tr] = TrainNN(shapes, targets, architecture);
+    nets{i} = net;
+    trs{i} = tr;
+end
+ 
+save('TrainedNets', 'nets', 'trs');
+
+
+%% Test ViewNeuron_FunctionSpace
+%
+% Here, we choose a neuron in a layer of a net, and for each object class
+% we plot a heatmap representing that neuron as a function on stimulus
+% space
+neuron = 8;
+net = nets{1};
+layer = 1;
+shape_names = {'Circle', 'Square', 'Triangle'};
+heatmaps = ViewNeuron_FunctionSpace(neuron, net, layer, shapes, shape_names);
+h = heatmaps{1};
+
+%% Plot the average and range of neural response at the hidden layer
+
+neurons = 1:30;
+net = nets{1};
+layer = 1;
+shape_names = {'Circle', 'Square', 'Triangle'};
+means = zeros(length(neurons), length(shape_names));
+ranges = zeros(size(means));
+for n = neurons
+   heatmaps = ViewNeuron_FunctionSpace(n, net, layer, shapes, shape_names);
+   means(i,:) = cellfun(@(x) mean(x(:)), heatmaps);
+%    ranges(i,:) = 
+end
+
+%% Test FunctionCloudPCA
+layer = 1;
+net = nets{1};
+K = 1;
+num_shapes = size(shapes,2);
+
+% Circles
+gridshape = [153 153]; 
+stimuli = shapes(:,1:num_shapes/3);
+FunctionCloudPCA(net, layer, stimuli, gridshape, K, 'Circles');
+
+% Squares
+gridshape = [153 153]; 
+stimuli = shapes(:,num_shapes/3+1:num_shapes*2/3);
+FunctionCloudPCA(net, layer, stimuli, gridshape, K, 'Squares');
+
+% Triangles
+gridshape = [153 153]; 
+stimuli = shapes(:,num_shapes*2/3+1:num_shapes);
+FunctionCloudPCA(net, layer, stimuli, gridshape, K, 'Triangles');
