@@ -1,9 +1,9 @@
 %% Load Data
 % We load a fine-translation manifold of circles, triangles, and squares,
 % as well as 20 neural networks trained to 0 error
-% load('/Users/AndreEsteva/Google Drive/Documents/Stanford/Stanford Vision Lab/DNNN/Data/ThreeShapeManifold-30.mat')
-load('/media/esteva/Extra Drive 1/DNNN/Data/ThreeShapeManifold-30.mat');
-% load('TrainedNets');
+load('/Users/AndreEsteva/Google Drive/Documents/Stanford/Stanford Vision Lab/DNNN/Data/ThreeShapeManifold-30.mat')
+% load('/media/esteva/Extra Drive 1/DNNN/Data/ThreeShapeManifold-30.mat');
+load('TrainedNets');
 
 %% Plot the shapes
   for i = 1:7000:length(shapes)
@@ -111,6 +111,18 @@ title('Triangle');
 xlabel(x);
 ylabel(y);
 pause(1);
+
+%% Project the activations of each stimulus class onto the PCA eigenvectors of the point cloud formed by all stimuli
+net = nets{1};
+layer = 1;
+
+data = ExtractDataAtLayer(net, shapes, layer);
+[eigvecs, score, eigvals] = pca(data);
+
+figure; hold on;
+scatter3(
+
+
 %% Test FunctionCloudPCA
 layer = 1;
 net = nets{1};
